@@ -89,7 +89,7 @@ $ cp ~/bin/* /usr/local/bin/
 
   **2. requests**
 ```bash
-pip3 install ffmpeg
+pip3 install ffmpeg-python
 
 pip3 instal requests
 ```

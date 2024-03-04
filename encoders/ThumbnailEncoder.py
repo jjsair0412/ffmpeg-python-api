@@ -5,12 +5,13 @@ import os
 import ffmpeg
 import base64 as bs
 
+
 class thumbnailEncoder:
     
     def __init__(self, targetFile, fileType):
         self.targetFile = targetFile
         self.fileType = fileType
-
+        
     # python에서 json은 dict type 이다.
     def createThumbnail(self) -> dict:
         if isinstance(self.targetFile, FileStorage):

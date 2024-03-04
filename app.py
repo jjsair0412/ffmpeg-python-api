@@ -4,7 +4,6 @@ from encoders.ThumbnailEncoder import thumbnailEncoder
 from encoders.CreateStreamingChunk import createStreaming
 from encoders.file_type import FileType
 from encoders.CreatePreviewImage import createPreviewImage
-from encoders.storageAccessManager.storageAccess import storageAccess
 
 # Flask 앱 정의
 app = Flask(__name__)

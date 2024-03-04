@@ -28,7 +28,7 @@ class createPreviewImage:
 
     @staticmethod
     def imageStreaming(tmp_path, preview_image_path):
-
+        
         ffmpeg.input(tmp_path)\
             .output(preview_image_path, 
                     vframes=1, 
