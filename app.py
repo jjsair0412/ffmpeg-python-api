@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_file
 from encoders.CreateMetadata import metadata
 from encoders.ThumbnailEncoder import thumbnailEncoder
 from encoders.CreateStreamingChunk import createStreaming
@@ -22,17 +22,18 @@ def create_thumbnail():
     if 'file' not in request.files:
         return 'no file part', 400
     file = request.files['file']
-
     type = request.form['fileType']
+    saveThumbnailName = request.form['saveThumbnailName']
+    outPutFilePath = request.form['outPutFilePath']
 
     if type == FileType.IMAGE.name:
-        create_thumbnail = thumbnailEncoder(file,FileType.IMAGE)
+        create_thumbnail = thumbnailEncoder(file, FileType.IMAGE, saveThumbnailName, outPutFilePath)
         return create_thumbnail.createThumbnail()
     elif type == FileType.VIDEO.name:
-        create_thumbnail = thumbnailEncoder(file,FileType.VIDEO)
+        create_thumbnail = thumbnailEncoder(file, FileType.VIDEO, saveThumbnailName, outPutFilePath)
         return create_thumbnail.createThumbnail()
     else:
-        return "false" , 500
+        return "create_thumbnail is fail" , 500
     
 
 @app.route('/metadata', methods=['POST'])
@@ -52,13 +53,14 @@ def create_streaming_chunk():
         return 'no file part', 400
     
     file = request.files['file']
-    tsSegmentPattern = request.form['tsSegmentPattern']
-    outputFilePath = request.form['outputFilePath']
     xAuthToken = request.form['xAuthToken']
+    uploadPath = request.form['uploadPath']
+    contentName = request.form['contentName']
 
-    create_streaming = createStreaming(file, tsSegmentPattern, outputFilePath)
+    create_streaming = createStreaming(file, xAuthToken, uploadPath, contentName)
 
     return create_streaming.createVideoChunk()
+
 
 
 @app.route('/previewImage', methods=['POST'])
@@ -67,10 +69,12 @@ def create_preview_image():
         return 'no file part', 400
     
     file = request.files['file']
-    preview_image_path = request.form['preview_image_path']
-    
+    xAuthToken = request.form['xAuthToken']
+    previewPath = request.form['previewPath']
+    originName = request.form['originName']
+    contentType = request.form['contentType']
 
-    create_preview_image = createPreviewImage(file,preview_image_path)
+    create_preview_image = createPreviewImage(file, previewPath, originName, xAuthToken, contentType)
 
     return create_preview_image.createImageChunk()
 

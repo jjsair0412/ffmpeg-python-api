@@ -20,11 +20,11 @@ class metadata:
             targetFile.save(tmp_path) 
 
             metaDto = self.getMetaData(ffprobe_path, tmp_path)
+            print(metaDto,'\n')
             os.remove(tmp_path)
 
             return metaDto
         else:
-            print("createMetadata: Value not found or self.targetFile is not a dict")
             return 'createMetadata: Value not found or self.targetFile is not a dict', 500
 
 

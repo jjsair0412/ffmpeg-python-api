@@ -1,38 +1,53 @@
+import shutil
+import glob
 import ffmpeg
 import os
 from werkzeug.datastructures import FileStorage
+from encoders.storageAccessManager.storageAccess import storageAccess
 
 class createStreaming:
-    def __init__(self, file, tsSegmentPattern, outputFilePath):
+    def __init__(self, file, xAuthToken, uploadPath, contentName):
         self.file = file
-        self.tsSegmentPattern = tsSegmentPattern
-        self.outputFilePath = outputFilePath
+        self.xAuthToken = xAuthToken
+        self.uploadPath = uploadPath
+        self.contentName = contentName
 
     
     def createVideoChunk(self) -> str:
         if isinstance(self.file, FileStorage):
             file = self.file
-            ts_segment_pattern = self.tsSegmentPattern
-            outputFilePath = self.outputFilePath
-            tmp_path = os.path.join('./tmp', file.filename)
+            uploadPath = self.uploadPath
+            contentName = self.contentName
+
+            if os.path.isdir("./tmp/"+uploadPath) == False:
+                os.makedirs("./tmp/"+uploadPath)
+            
+            save_path =  './tmp/' + uploadPath + "/" + contentName
+
+            m3u8FilePath = save_path + '.m3u8'
+            ts_segment_pattern = save_path + '_%03d_.ts'
+            xAuthToken = self.xAuthToken
+
+            tmp_path = os.path.join('./tmp/'+uploadPath, file.filename)
 
             file.save(tmp_path)
             
-            self.videoStreaming(tmp_path, outputFilePath, ts_segment_pattern)
+            self.videoStreaming(tmp_path, m3u8FilePath, ts_segment_pattern, './tmp/'+uploadPath, xAuthToken, contentName)
 
             os.remove(tmp_path)
-
+            shutil.rmtree("./tmp/"+uploadPath)
             return 'ok'
             
         else:
-            print("createMetadata: Value not found or self.targetFile is not a dict")
-            return 'fail'
+            return 'createMetadata: Value not found or self.targetFile is not a dict', 500
 
     @staticmethod
-    def videoStreaming(tmp_path, outputFilePath, ts_segment_pattern):
+    def videoStreaming(tmp_path, m3u8FilePath, ts_segment_pattern, uploadPath, xAuthToken, contentName):
+        print('uploadPath : ' + uploadPath)
+
         ffmpeg.input(tmp_path)\
             .output(
-                outputFilePath,
+                m3u8FilePath,
                 vf='scale=1280:720',
                 format='hls', 
                 vcodec='libx264', 
@@ -42,5 +57,19 @@ class createStreaming:
                 **{'profile:v': 'high444'})\
             .run()
         
+        ts_file_names = glob.glob(uploadPath + '/' + contentName + '*.ts')
+        for ts_path in ts_file_names:
+            with open(ts_path,'rb') as tsFile:
+                storageManager = storageAccess(xAuthToken, ts_path[6:], 'application/octet-stream' , tsFile.read())
+                storageManager.streamingUpload()
+                
+                
+        m3u8FilePath = glob.glob(uploadPath + '/' + contentName + '.m3u8')
+        for playlistPath in m3u8FilePath:
+            with open(playlistPath, 'rb') as playlistFile:
+                storageManager = storageAccess(xAuthToken, playlistPath[6:], 'application/octet-stream' , playlistFile.read())
+                storageManager.streamingUpload()
+
+
         
-        
+    

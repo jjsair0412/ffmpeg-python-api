@@ -1,5 +1,6 @@
 from werkzeug.datastructures import FileStorage
 from .file_type import FileType
+import shutil
 
 import os
 import ffmpeg
@@ -8,49 +9,61 @@ import base64 as bs
 
 class thumbnailEncoder:
     
-    def __init__(self, targetFile, fileType):
+    def __init__(self, targetFile, fileType, saveThumbnailName, outPutFilePath):
         self.targetFile = targetFile
         self.fileType = fileType
+        self.saveThumbnailName = saveThumbnailName
+        self.outPutFilePath = outPutFilePath
         
-    # python에서 json은 dict type 이다.
     def createThumbnail(self) -> dict:
         if isinstance(self.targetFile, FileStorage):
-            tmp_path = os.path.join('./tmp',self.targetFile.filename)
+
+            saveThumbnailName = self.saveThumbnailName
+            outPutFilePath = self.outPutFilePath
+
+
+            if os.path.isdir("."+outPutFilePath) == False:
+                os.makedirs("."+outPutFilePath)
+
+            tmp_path = os.path.join('./'+outPutFilePath, saveThumbnailName)
             self.targetFile.save(tmp_path)
 
 
             match self.fileType :   
                 case FileType.IMAGE: # image
-                    output_path = self.imageThumbnailMaker(tmp_path)
+                    base_image_dic = self.imageThumbnailMaker(tmp_path, outPutFilePath, saveThumbnailName)
                     os.remove(tmp_path)
-                    return self.loadImages(output_path)
+                    shutil.rmtree("."+outPutFilePath)
+                    return base_image_dic
 
                 
                 case FileType.VIDEO: # video
                     video_duration = self.get_video_duration(tmp_path)
-                    output_paths = self.videoThumbnailMaker(video_duration, tmp_path)
+                    output_paths = self.videoThumbnailMaker(tmp_path, video_duration, outPutFilePath, saveThumbnailName)
+                    video_thumbnail_dict = self.loadImages(output_paths)
                     os.remove(tmp_path)
-                    return self.loadImages(output_paths)
+                    shutil.rmtree("."+outPutFilePath)
+                    return video_thumbnail_dict
                 
                 case _ :
                     print('file type is not match')
                     os.remove(tmp_path)
+                    shutil.rmtree("."+outPutFilePath)
                     return 500
                     
-        else:
-            print("callCreate Thumbnail: Value not found or self.targetFile is not a dict")        
-            return 500
+        else:   
+            return 'callCreate Thumbnail: Value not found or self.targetFile is not a dict', 500
     
     @staticmethod
-    def videoThumbnailMaker(videoDuration, file_path) -> list:
+    def videoThumbnailMaker(file_path, videoDuration, outPutFilePath, saveThumbnailName) -> list:
 
         fractions = {0.2, 0.4, 0.6, 0.8}
         thumbnail_paths=[]
 
         for fraction in fractions:
 
-            thumbnail_name = "output_thumbnail_"  + str(fraction) + ".jpeg"  # 예시 파일명, 실제 적용 필요
-            output_path = os.path.join('./tmp', thumbnail_name)
+            thumbnail_name = str(fraction) + "_"+ saveThumbnailName+".PNG"
+            output_path = os.path.join('.' + outPutFilePath, thumbnail_name)
 
             if videoDuration < 3:
                 midTime = videoDuration * 1000 / 2
@@ -73,17 +86,19 @@ class thumbnailEncoder:
 
 
     @staticmethod
-    def imageThumbnailMaker(file_path) -> str:
+    def imageThumbnailMaker(file_path, outPutFilePath, saveThumbnailName) -> dict:
 
-        thumbnail_name = "output_thumbnail.png"
-
-        output_path = os.path.join('./tmp',thumbnail_name)
+        output_path = os.path.join('.' + outPutFilePath ,saveThumbnailName+".PNG")
 
         ffmpeg.input(file_path)\
             .output(output_path, vframes=1, vf='scale=1280:720')\
             .run()
 
-        return output_path
+        with open(output_path, 'rb') as file:
+            file_bytes = file.read()
+            base_images = bs.b64encode(file_bytes).decode('utf-8')
+        
+        return base_images
 
 
     @staticmethod
@@ -94,15 +109,15 @@ class thumbnailEncoder:
                 
 
     @staticmethod
-    def loadImages(imagesList) -> list:
+    def loadImages(imagesList) -> dict:
         base_images = {}
         count = 0
+
         for path in imagesList:
             with open(path, 'rb') as file:
                 file_byte = file.read()
                 base_images[count] = bs.b64encode(file_byte).decode('utf-8')
             
-            os.remove(path)
             count+=1
 
         return base_images
