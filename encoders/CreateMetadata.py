@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 import os
 import subprocess
 from werkzeug.datastructures import FileStorage
@@ -6,15 +7,17 @@ import json
 
 class metadata:
 
-    def __init__(self, file, ffprobe_path):
+    def __init__(self, file):
         self.file = file
-        self.ffprobe_path = ffprobe_path
 
     def createMetadata(self) -> str:
         if isinstance(self.file, FileStorage):
-            
+            load_dotenv()
             targetFile = self.file
-            ffprobe_path = self.ffprobe_path
+
+            ffprobe_path = os.environ.get('ffprobe_path')
+
+
 
             tmp_path = os.path.join('./tmp', targetFile.filename)
             targetFile.save(tmp_path) 

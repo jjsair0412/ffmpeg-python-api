@@ -42,7 +42,7 @@ def create_file_metadata():
         return 'no file part', 400
     
     file = request.files['file']
-    create_file_metadata = metadata(file,'/opt/homebrew/bin/ffprobe')
+    create_file_metadata = metadata(file)
 
     return create_file_metadata.createMetadata()
 

@@ -1,5 +1,6 @@
-import configparser
+from dotenv import load_dotenv
 import requests
+import os
 
 class storageAccess:
     def __init__(self, xAuthToken, uploadPathFileName, contentType, targetFile):
@@ -9,17 +10,15 @@ class storageAccess:
         self.targetFile = targetFile
 
     def streamingUpload(self):
-
-        config = configparser.ConfigParser()
-        config.read('./config/config.ini', encoding='utf-8')
+        load_dotenv()
         
         targetFile = self.targetFile
 
-        streamingPath = config['path']['chunkUploadTargetUrl']
+        streamingPath = os.environ.get('chunkUploadTargetUrl')
 
         url = streamingPath.format (
-            projectID=config['kakao_icloud']['projectId'],
-            bucket_name=config['kakao_icloud']['bucketName'],
+            projectID=os.environ.get('projectId'),
+            bucket_name=os.environ.get('bucketName'),
             uploadPathFileName=self.uploadPathFileName
         )
 

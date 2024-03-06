@@ -2,7 +2,7 @@
 python with ffmpeg encoder
 
 ## api reference
-- python version : python3.12
+- python version : Python 3.11.4
 
 ## Requirements Options
 ### 1. ffmpeg install
@@ -84,14 +84,10 @@ $ cp ~/bin/* /usr/local/bin/
 
 ### 2. import packages
 - download target module : 
-
-  **1. ffmpeg**
-
-  **2. requests**
+  - ffmpeg-python
+  - flask
 ```bash
-pip3 install ffmpeg-python
-
-pip3 instal requests
+pip3 install -r requirements.txt
 ```
 
 ### 3. config.ini 파일 생성
@@ -106,6 +102,9 @@ regionName = {region_name}
 [path]
 chunkUploadTargetUrl = {chunk_upload_path}
 previewOrThumbnailUploadTargetUrl = {preview_upload_path}
+
+[ffmpeg]
+ffprobe_path = {ffprobe_path}
 EOF
 ```
 
@@ -142,3 +141,14 @@ ok
 
 ### 5. preview Image 추출
 #### Request Syntax
+
+## Docker Run
+### Docker build command
+```bash
+docker build -t ffmpeg-api:{tag} . \
+  --build-arg "projectId={projectId}" \
+  --build-arg "bucketName={bucketName}" \
+  --build-arg "regionName={regionName}" \
+  --build-arg "chunkUploadTargetUrl={chunkUploadTargetUrl}" \
+  --build-arg "ffprobe_path=/usr/local/bin/ffprobe"
+```
