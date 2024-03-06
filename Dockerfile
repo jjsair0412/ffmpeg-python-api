@@ -110,8 +110,8 @@ ENV chunkUploadTargetUrl=$chunkUploadTargetUrl
 ENV ffprobe_path=$ffprobe_path
 
 
-RUN adduser ffmpeguser --system
-RUN addgroup ffmpeguser && adduser ffmpeguser ffmpeguser
-USER ffmpegUser
+RUN addgroup ffmpeguser
+RUN adduser --system ffmpeguser --ingroup ffmpeguser
+USER ffmpeguser
 
 CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
