@@ -12,14 +12,13 @@ class metadata:
 
     def createMetadata(self) -> str:
         if isinstance(self.file, FileStorage):
-            load_dotenv()
+            load_dotenv(dotenv_path='./config/.env')
             targetFile = self.file
 
             ffprobe_path = os.environ.get('ffprobe_path')
 
-
-
-            tmp_path = os.path.join('./tmp', targetFile.filename)
+            os.mkdir(path='./tmp/'+targetFile.filename)
+            tmp_path = os.path.join('./tmp/'+targetFile.filename, targetFile.filename)
             targetFile.save(tmp_path) 
 
             metaDto = self.getMetaData(ffprobe_path, tmp_path)

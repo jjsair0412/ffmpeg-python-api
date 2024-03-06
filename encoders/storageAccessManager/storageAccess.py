@@ -10,7 +10,7 @@ class storageAccess:
         self.targetFile = targetFile
 
     def streamingUpload(self):
-        load_dotenv()
+        load_dotenv(dotenv_path='./config/.env')
         
         targetFile = self.targetFile
 

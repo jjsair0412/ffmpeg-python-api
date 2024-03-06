@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file
+from flask import Flask, request
 from encoders.CreateMetadata import metadata
 from encoders.ThumbnailEncoder import thumbnailEncoder
 from encoders.CreateStreamingChunk import createStreaming
