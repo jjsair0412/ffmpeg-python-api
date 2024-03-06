@@ -19,23 +19,23 @@ class createStreaming:
             uploadPath = self.uploadPath
             contentName = self.contentName
 
-            if os.path.isdir("/app/tmp/"+uploadPath) == False:
-                os.makedirs("/app/tmp/"+uploadPath)
+            if os.path.isdir("./tmp/"+uploadPath) == False:
+                os.makedirs("./tmp/"+uploadPath)
             
-            save_path =  '/app/tmp/' + uploadPath + "/" + contentName
+            save_path =  './tmp/' + uploadPath + "/" + contentName
 
             m3u8FilePath = save_path + '.m3u8'
             ts_segment_pattern = save_path + '_%03d_.ts'
             xAuthToken = self.xAuthToken
 
-            tmp_path = os.path.join('/app/tmp/'+uploadPath, file.filename)
+            tmp_path = os.path.join('./tmp/'+uploadPath, file.filename)
 
             file.save(tmp_path)
             
-            self.videoStreaming(tmp_path, m3u8FilePath, ts_segment_pattern, '/app/tmp/'+uploadPath, xAuthToken, contentName)
+            self.videoStreaming(tmp_path, m3u8FilePath, ts_segment_pattern, './tmp/'+uploadPath, xAuthToken, contentName)
 
             os.remove(tmp_path)
-            shutil.rmtree("/app/tmp/"+uploadPath)
+            shutil.rmtree("./tmp/"+uploadPath)
             return 'ok'
             
         else:

@@ -113,5 +113,8 @@ ENV ffprobe_path=$ffprobe_path
 RUN addgroup ffmpeguser
 RUN adduser --system ffmpeguser --ingroup ffmpeguser
 USER ffmpeguser
+RUN chmod 
 
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
