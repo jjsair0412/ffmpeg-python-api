@@ -1,3 +1,5 @@
+import shutil
+from datetime import datetime
 from dotenv import load_dotenv
 import os
 import subprocess
@@ -14,17 +16,18 @@ class metadata:
         if isinstance(self.file, FileStorage):
             load_dotenv(dotenv_path='./config/.env')
             targetFile = self.file
-
             ffprobe_path = os.environ.get('ffprobe_path')
 
-            os.mkdir(path='./tmp/'+targetFile.filename)
-            tmp_path = os.path.join('./tmp/'+targetFile.filename, targetFile.filename)
+            tmp_save_path = './tmp/metadata'+datetime.today().strftime("/%Y/%m/%d/")+targetFile.filename
+
+            os.makedirs(tmp_save_path)
+
+            tmp_path = os.path.join(tmp_save_path, targetFile.filename)
             targetFile.save(tmp_path) 
 
             metaDto = self.getMetaData(ffprobe_path, tmp_path)
-            print(metaDto,'\n')
-            os.remove(tmp_path)
-
+            
+            shutil.rmtree(tmp_save_path)
             return metaDto
         else:
             return 'createMetadata: Value not found or self.targetFile is not a dict', 500

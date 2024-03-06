@@ -2,7 +2,6 @@ import ffmpeg
 import os
 from werkzeug.datastructures import FileStorage
 import shutil
-import glob
 from encoders.storageAccessManager.storageAccess import storageAccess
 
 
