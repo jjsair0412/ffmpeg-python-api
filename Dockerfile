@@ -110,11 +110,11 @@ ENV chunkUploadTargetUrl=$chunkUploadTargetUrl
 ENV ffprobe_path=$ffprobe_path
 
 RUN mkdir -p /tmp && \
-  chmod 755 /tmp
+  chmod -R 755 /tmp
 
 RUN addgroup ffmpeguser
 RUN adduser --system ffmpeguser --ingroup ffmpeguser
-RUN chown ffmpeguser:ffmpeguser /tmp
+RUN chown -R ffmpeguser:ffmpeguser /tmp
 
 
 
