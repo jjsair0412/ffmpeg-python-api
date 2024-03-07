@@ -114,8 +114,11 @@ RUN mkdir -p /tmp && \
 
 RUN addgroup ffmpeguser
 RUN adduser --system ffmpeguser --ingroup ffmpeguser
+RUN chown ffmpeguser:ffmpeguser /tmp
+
+
+
 USER ffmpeguser
 
-RUN chown ffmpeguser:ffmpeguser /tmp
 
 CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
