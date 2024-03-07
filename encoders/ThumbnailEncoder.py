@@ -22,10 +22,13 @@ class thumbnailEncoder:
             outPutFilePath = self.outPutFilePath
 
 
-            if os.path.isdir("."+outPutFilePath) == False:
-                os.makedirs("."+outPutFilePath)
+            # if os.path.isdir("."+outPutFilePath) == False:
+            #     os.makedirs("."+outPutFilePath)
+            if os.path.isdir(outPutFilePath) == False:
+                os.makedirs(outPutFilePath)
 
-            tmp_path = os.path.join('./'+outPutFilePath, saveThumbnailName)
+            # tmp_path = os.path.join('./'+outPutFilePath, saveThumbnailName)
+            tmp_path = os.path.join(outPutFilePath, saveThumbnailName)
             self.targetFile.save(tmp_path)
 
 
@@ -33,7 +36,8 @@ class thumbnailEncoder:
                 case FileType.IMAGE: # image
                     base_image_dic = self.imageThumbnailMaker(tmp_path, outPutFilePath, saveThumbnailName)
                     os.remove(tmp_path)
-                    shutil.rmtree("."+outPutFilePath)
+                    # shutil.rmtree("."+outPutFilePath)
+                    shutil.rmtree(outPutFilePath)
                     return base_image_dic
 
                 
@@ -42,13 +46,15 @@ class thumbnailEncoder:
                     output_paths = self.videoThumbnailMaker(tmp_path, video_duration, outPutFilePath, saveThumbnailName)
                     video_thumbnail_dict = self.loadImages(output_paths)
                     os.remove(tmp_path)
-                    shutil.rmtree("."+outPutFilePath)
+                    # shutil.rmtree("."+outPutFilePath)
+                    shutil.rmtree(outPutFilePath)
                     return video_thumbnail_dict
                 
                 case _ :
                     print('file type is not match')
                     os.remove(tmp_path)
-                    shutil.rmtree("."+outPutFilePath)
+                    # shutil.rmtree("."+outPutFilePath)
+                    shutil.rmtree(outPutFilePath)
                     return 500
                     
         else:   
@@ -63,7 +69,8 @@ class thumbnailEncoder:
         for fraction in fractions:
 
             thumbnail_name = str(fraction) + "_"+ saveThumbnailName+".PNG"
-            output_path = os.path.join('.' + outPutFilePath, thumbnail_name)
+            # output_path = os.path.join('.' + outPutFilePath, thumbnail_name)
+            output_path = os.path.join(outPutFilePath, thumbnail_name)
 
             if videoDuration < 3:
                 midTime = videoDuration * 1000 / 2
@@ -88,7 +95,8 @@ class thumbnailEncoder:
     @staticmethod
     def imageThumbnailMaker(file_path, outPutFilePath, saveThumbnailName) -> dict:
 
-        output_path = os.path.join('.' + outPutFilePath ,saveThumbnailName+".PNG")
+        # output_path = os.path.join('.' + outPutFilePath ,saveThumbnailName+".PNG")
+        output_path = os.path.join(outPutFilePath ,saveThumbnailName+".PNG")
 
         ffmpeg.input(file_path)\
             .output(output_path, vframes=1, vf='scale=1280:720')\
