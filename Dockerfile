@@ -114,8 +114,8 @@ RUN addgroup ffmpeguser
 RUN adduser --system ffmpeguser --ingroup ffmpeguser
 USER ffmpeguser
 
-RUN mkdir -p ./tmp && \
-    chown ffmpeguser:ffmpeguser ./tmp && \
-    chmod 755 ./tmp
+RUN mkdir -p /tmp && \
+    chown ffmpeguser:ffmpeguser /tmp && \
+    chmod 755 /tmp
 
 CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]

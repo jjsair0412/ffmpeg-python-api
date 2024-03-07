@@ -18,7 +18,7 @@ class metadata:
             targetFile = self.file
             ffprobe_path = os.environ.get('ffprobe_path')
 
-            tmp_save_path = './tmp/metadata'+datetime.today().strftime("/%Y/%m/%d/")+targetFile.filename
+            tmp_save_path = '/tmp/metadata'+datetime.today().strftime("/%Y/%m/%d/")+targetFile.filename
 
             os.makedirs(tmp_save_path)
 

@@ -21,16 +21,16 @@ class createPreviewImage:
             xAuthToken = self.xAuthToken
             contentType = self.contentType
 
-            if os.path.isdir("./tmp/"+previewPath) == False:
-                os.makedirs("./tmp/"+previewPath)
+            if os.path.isdir("/tmp/"+previewPath) == False:
+                os.makedirs("/tmp/"+previewPath)
 
-            tmp_path = os.path.join('./tmp/'+previewPath, originName)
+            tmp_path = os.path.join('/tmp/'+previewPath, originName)
             file.save(tmp_path)
             
-            output_save_path = './tmp/'+previewPath+'/' + originName+".png"
+            output_save_path = '/tmp/'+previewPath+'/' + originName+".png"
             self.imageStreaming(tmp_path, output_save_path, xAuthToken, contentType)
 
-            shutil.rmtree('./tmp/'+previewPath)
+            shutil.rmtree('/tmp/'+previewPath)
             return 'ok'
             
         else:
