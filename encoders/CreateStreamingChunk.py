@@ -43,7 +43,6 @@ class createStreaming:
 
     @staticmethod
     def videoStreaming(tmp_path, m3u8FilePath, ts_segment_pattern, uploadPath, xAuthToken, contentName):
-        print('uploadPath : ' + uploadPath)
 
         ffmpeg.input(tmp_path)\
             .output(
@@ -60,14 +59,14 @@ class createStreaming:
         ts_file_names = glob.glob(uploadPath + '/' + contentName + '*.ts')
         for ts_path in ts_file_names:
             with open(ts_path,'rb') as tsFile:
-                storageManager = storageAccess(xAuthToken, ts_path[6:], 'application/octet-stream' , tsFile.read())
+                storageManager = storageAccess(xAuthToken, ts_path[5:], 'application/octet-stream' , tsFile.read())
                 storageManager.streamingUpload()
                 
                 
         m3u8FilePath = glob.glob(uploadPath + '/' + contentName + '.m3u8')
         for playlistPath in m3u8FilePath:
             with open(playlistPath, 'rb') as playlistFile:
-                storageManager = storageAccess(xAuthToken, playlistPath[6:], 'application/octet-stream' , playlistFile.read())
+                storageManager = storageAccess(xAuthToken, playlistPath[5:], 'application/octet-stream' , playlistFile.read())
                 storageManager.streamingUpload()
 
 
