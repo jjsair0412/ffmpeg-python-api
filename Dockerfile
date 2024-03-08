@@ -109,8 +109,8 @@ ENV regionName=$regionName
 ENV chunkUploadTargetUrl=$chunkUploadTargetUrl
 ENV ffprobe_path=$ffprobe_path
 
-RUN mkdir -p /tmp && \
-  chmod -R 777 /tmp
+RUN mkdir -p /app/tmp && \
+  chmod -R 777 /app/tmp
 
 RUN addgroup ffmpeguser
 RUN adduser --system ffmpeguser --ingroup ffmpeguser
