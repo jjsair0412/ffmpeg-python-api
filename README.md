@@ -90,21 +90,23 @@ $ cp ~/bin/* /usr/local/bin/
 pip3 install -r requirements.txt
 ```
 
-### 3. config.ini 파일 생성
+### 3. .env 파일 생성
 ```bash
-cat <<EOF> ./config/config.ini
-[kakao_icloud]
-projectId = {project_id}
-bucketName = {bucket_name}
-regionName = {region_name}
+cat <<EOF> ./config/.env
+projectId = {projectId}
+bucketName = {bucketName}
+regionName = {regionName}
+chunkUploadTargetUrl = {chunkUploadTargetUrl}
 
-
-[path]
-chunkUploadTargetUrl = {chunk_upload_path}
-previewOrThumbnailUploadTargetUrl = {preview_upload_path}
-
-[ffmpeg]
+# ffmprobe binary path
 ffprobe_path = {ffprobe_path}
+
+# AWS
+access_key = {access_key}
+secret_key = {secret_key}
+region_name = {region_name}
+bucket_name = {bucket_name}
+
 EOF
 ```
 

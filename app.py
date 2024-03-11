@@ -53,11 +53,10 @@ def create_streaming_chunk():
         return 'no file part', 400
     
     file = request.files['file']
-    xAuthToken = request.form['xAuthToken']
     uploadPath = request.form['uploadPath']
     contentName = request.form['contentName']
 
-    create_streaming = createStreaming(file, xAuthToken, uploadPath, contentName)
+    create_streaming = createStreaming(file, uploadPath, contentName)
 
     return create_streaming.createVideoChunk()
 
@@ -69,12 +68,10 @@ def create_preview_image():
         return 'no file part', 400
     
     file = request.files['file']
-    xAuthToken = request.form['xAuthToken']
     previewPath = request.form['previewPath']
     originName = request.form['originName']
-    contentType = request.form['contentType']
 
-    create_preview_image = createPreviewImage(file, previewPath, originName, xAuthToken, contentType)
+    create_preview_image = createPreviewImage(file, previewPath, originName)
 
     return create_preview_image.createImageChunk()
 
