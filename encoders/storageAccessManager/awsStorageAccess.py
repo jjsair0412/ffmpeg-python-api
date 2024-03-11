@@ -13,14 +13,7 @@ class awsStorageAccess:
         object_name = self.obejct_name
 
         url_generator = createUrl(
-            object_name,
-            # fields={'acl': 'public-read', 'Content-Type': "application/octet-stream"},
-            # conditions=[{'acl': 'public-read'},{'Content-Type':"application/octet-stream"}],
-            # fields={'acl': 'public-read'},
-            # conditions=[{'acl': 'public-read'}],
-            # fields={"Content-Type": "application/octet-stream"},
-            # conditions=["starts-with", "$Content-Type", "application/"],                                        
-            # expiration=3600
+            object_name
         )
 
         response = url_generator.create_presigned_post()

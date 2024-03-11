@@ -6,7 +6,7 @@ import os
 
 class createUrl:
 
-    def __init__(self, object_name, fields=None, conditions= None,  expiration=3600) -> None:
+    def __init__(self, object_name, fields=None, conditions= None,  expiration=60) -> None:
         self.object_name = object_name
         self.fields = fields
         self.conditions = conditions
