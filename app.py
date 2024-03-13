@@ -4,6 +4,7 @@ from encoders.ThumbnailEncoder import thumbnailEncoder
 from encoders.CreateStreamingChunk import createStreaming
 from encoders.file_type import FileType
 from encoders.CreatePreviewImage import createPreviewImage
+import logging
 
 # Flask 앱 정의
 app = Flask(__name__)
