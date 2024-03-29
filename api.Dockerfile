@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-RUN mkdir -p /app
+RUN mkdir /app
 COPY . /app
 WORKDIR /app
 
