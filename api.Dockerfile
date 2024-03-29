@@ -48,7 +48,7 @@ RUN apt-get install libmp3lame-dev -y
 
 RUN apt-get install libopus-dev -y
 
-RUN mv /app/ffmpeg-snapshot.tar.bz2 ~/ffmpeg_sources/
+RUN mv /app/bin/ffmpeg-snapshot.tar.bz2 ~/ffmpeg_sources/
 RUN cd ~/ffmpeg_sources && \
 #    curl -o ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2 && \
    tar xjvf ffmpeg-snapshot.tar.bz2 && \
