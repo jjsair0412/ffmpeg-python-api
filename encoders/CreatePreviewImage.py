@@ -2,7 +2,6 @@ import ffmpeg
 import os
 from werkzeug.datastructures import FileStorage
 import shutil
-from encoders.storageAccessManager.storageAccess import storageAccess
 from encoders.storageAccessManager.awsStorageAccess import awsStorageAccess
 
 

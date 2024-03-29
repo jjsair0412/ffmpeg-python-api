@@ -3,7 +3,6 @@ import glob
 import ffmpeg
 import os
 from werkzeug.datastructures import FileStorage
-from encoders.storageAccessManager.storageAccess import storageAccess
 from encoders.storageAccessManager.awsStorageAccess import awsStorageAccess
 
 class createStreaming:
