@@ -38,8 +38,8 @@ class createPreviewImage:
         
         ffmpeg.input(tmp_path)\
             .output(output_save_path, 
-                    vframes=1, 
-                    vf='scale=1280:720'
+                    vframes=1
+                    # vf='scale=1280:720'
                     )\
             .run()
 

@@ -45,7 +45,7 @@ class createStreaming:
         ffmpeg.input(tmp_path)\
             .output(
                 m3u8FilePath,
-                vf='scale=1280:720',
+                # vf='scale=1280:720',
                 format='hls', 
                 vcodec='libx264', 
                 hls_time=3, 

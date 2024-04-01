@@ -74,8 +74,13 @@ class thumbnailEncoder:
 
             if videoDuration < 3:
                 midTime = videoDuration * 1000 / 2
+                # ffmpeg.input(file_path, ss=midTime)\
+                #     .output(output_path, vframes=1, vf='scale=1280:720')\
+                #     .run()
+                # OLD (해상도 고정)
+                
                 ffmpeg.input(file_path, ss=midTime)\
-                    .output(output_path, vframes=1, vf='scale=1280:720')\
+                    .output(output_path, vframes=1)\
                     .run()
             
             else :
@@ -83,9 +88,15 @@ class thumbnailEncoder:
                     start_offset = float(videoDuration * fraction * 1000 - 500)
                     # start_offsets.append(start_offset)
 
+                    # ffmpeg.input(file_path, ss=(start_offset / 1000))\
+                    #     .output(output_path, vframes=1, vf='scale=1280:720', acodec='copy')\
+                    #     .run()
+                    # OLD (해상도 고정)
+
                     ffmpeg.input(file_path, ss=(start_offset / 1000))\
-                        .output(output_path, vframes=1, vf='scale=1280:720', acodec='copy')\
+                        .output(output_path, vframes=1, acodec='copy')\
                         .run()
+
             
             thumbnail_paths.append(output_path)
 
