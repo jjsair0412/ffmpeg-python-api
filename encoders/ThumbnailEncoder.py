@@ -68,7 +68,7 @@ class thumbnailEncoder:
 
         for fraction in fractions:
 
-            thumbnail_name = str(fraction) + "_"+ saveThumbnailName+".PNG"
+            thumbnail_name = str(fraction) + "_"+ saveThumbnailName+".jpeg"
             # output_path = os.path.join('.' + outPutFilePath, thumbnail_name)
             output_path = os.path.join(outPutFilePath, thumbnail_name)
 
@@ -80,7 +80,7 @@ class thumbnailEncoder:
                 # OLD (해상도 고정)
                 
                 ffmpeg.input(file_path, ss=midTime)\
-                    .output(output_path, vframes=1)\
+                    .output(output_path, vframes=1,crf=63, **{'c:a': 'copy'})\
                     .run()
             
             else :
@@ -94,7 +94,7 @@ class thumbnailEncoder:
                     # OLD (해상도 고정)
 
                     ffmpeg.input(file_path, ss=(start_offset / 1000))\
-                        .output(output_path, vframes=1, acodec='copy')\
+                        .output(output_path, vframes=1 ,crf=63, **{'c:a': 'copy'})\
                         .run()
 
             
@@ -107,10 +107,16 @@ class thumbnailEncoder:
     def imageThumbnailMaker(file_path, outPutFilePath, saveThumbnailName) -> dict:
 
         # output_path = os.path.join('.' + outPutFilePath ,saveThumbnailName+".PNG")
-        output_path = os.path.join(outPutFilePath ,saveThumbnailName+".PNG")
+        output_path = os.path.join(outPutFilePath ,saveThumbnailName+".jpeg")
+
+        # ffmpeg.input(file_path)\
+        #     .output(output_path, vframes=1, vf='scale=1280:720')\
+        #     .run()
+        
+
 
         ffmpeg.input(file_path)\
-            .output(output_path, vframes=1, vf='scale=1280:720')\
+            .output(output_path, vframes=1, crf=51, c='copy', **{'c:a': 'copy'})\
             .run()
 
         with open(output_path, 'rb') as file:
