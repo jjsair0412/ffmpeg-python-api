@@ -4,7 +4,7 @@ from encoders.ThumbnailEncoder import thumbnailEncoder
 from encoders.CreateStreamingChunk import createStreaming
 from encoders.file_type import FileType
 from encoders.CreatePreviewImage import createPreviewImage
-import logging
+from encoders.NewThumbnailEncoder import newThumbnailEncoder
 
 # Flask 앱 정의
 app = Flask(__name__)
@@ -35,7 +35,21 @@ def create_thumbnail():
         return create_thumbnail.createThumbnail()
     else:
         return "create_thumbnail is fail" , 500
-    
+
+@app.route('/thumbnail_new', methods=['POST'])
+def new_create_thumbnail():
+    file_name = request.form['fileName']
+    file_path = request.form['filePath']
+    file_type = request.form['fileType']
+
+    if file_type == FileType.IMAGE.name:
+        create_thumbnail = newThumbnailEncoder(file_name, file_path, FileType.IMAGE)
+        return create_thumbnail.createThumbnail()
+    elif file_type == FileType.VIDEO.name:
+        create_thumbnail = newThumbnailEncoder(file_name, file_path, FileType.VIDEO)
+        return create_thumbnail.createThumbnail()
+    else:
+        return "create_thumbnail is fail" , 500
 
 @app.route('/metadata', methods=['POST'])
 def create_file_metadata():

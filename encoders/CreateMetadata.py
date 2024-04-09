@@ -51,6 +51,9 @@ class metadata:
         video_stream = next((stream for stream in metadata.get('streams', []) if stream.get('codec_type') == 'video'), None)
         audio_stream = next((stream for stream in metadata.get('streams', []) if stream.get('codec_type') == 'audio'), None)
 
+        print("test width : " + str(video_stream.get('width')))
+        print("test height : " + str(video_stream.get('height')))
+
         data =  MetadataDto(
             format_long_name=format_info.get('format_long_name'),
             duration_in_seconds=float(format_info.get('duration', 0)),
