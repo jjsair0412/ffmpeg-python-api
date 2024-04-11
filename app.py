@@ -1,10 +1,11 @@
 from flask import Flask, request
 from encoders.CreateMetadata import metadata
 from encoders.CreateStreamingChunk import createStreaming
+from encoders.NewCreateStreamingChunk import newCreateStreaming
+from encoders.NewCreatePreviewImage import newCreatePreviewImage
 from encoders.file_type import FileType
 from encoders.CreatePreviewImage import createPreviewImage
 from encoders.ThumbnailEncoder import ThumbnailEncoder
-import logging
 
 
 # Flask 앱 정의
@@ -40,19 +41,19 @@ def new_create_thumbnail():
         return "create_thumbnail is fail" , 500
 
 
-@app.route('/metadata', methods=['POST'])
-def create_file_metadata():
-    if 'file' not in request.files:
-        return 'no file part', 400
+# @app.route('/metadata', methods=['POST'])
+# def create_file_metadata():
+#     if 'file' not in request.files:
+#         return 'no file part', 400
     
-    file = request.files['file']
-    create_file_metadata = metadata(file)
+#     file = request.files['file']
+#     create_file_metadata = metadata(file)
 
-    return create_file_metadata.createMetadata()
+#     return create_file_metadata.createMetadata()
 
 
-@app.route('/streaming', methods=['POST'])
-def create_streaming_chunk():
+@app.route('/streaming_old', methods=['POST'])
+def create_streaming_chunk_old():
     if 'file' not in request.files:
         return 'no file part', 400
     
@@ -64,10 +65,8 @@ def create_streaming_chunk():
 
     return create_streaming.createVideoChunk()
 
-
-
-@app.route('/previewImage', methods=['POST'])
-def create_preview_image():
+@app.route('/previewImage_old', methods=['POST'])
+def create_preview_image_old():
     if 'file' not in request.files:
         return 'no file part', 400
     
@@ -76,6 +75,32 @@ def create_preview_image():
     originName = request.form['originName']
 
     create_preview_image = createPreviewImage(file, previewPath, originName)
+
+    return create_preview_image.createImageChunk()
+
+@app.route('/streaming', methods=['POST'])
+def create_streaming_chunk():
+    
+    save_file_name = request.form['saveFileName']
+    origin_file_name = request.form['originFileName']
+    uploadPath = request.form['uploadPath']
+    contentName = request.form['contentName']
+
+    create_streaming = newCreateStreaming(uploadPath, contentName, origin_file_name, save_file_name)
+
+    return create_streaming.createVideoChunk()
+
+
+
+@app.route('/previewImage', methods=['POST'])
+def create_preview_image():
+    
+    save_file_name = request.form['saveFileName']
+    origin_file_name = request.form['originFileName']
+    previewPath = request.form['previewPath']
+    originName = request.form['originName']
+
+    create_preview_image = newCreatePreviewImage(previewPath, originName, origin_file_name, save_file_name)
 
     return create_preview_image.createImageChunk()
 
