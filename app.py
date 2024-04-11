@@ -1,10 +1,11 @@
 from flask import Flask, request
 from encoders.CreateMetadata import metadata
-from encoders.ThumbnailEncoder import thumbnailEncoder
 from encoders.CreateStreamingChunk import createStreaming
 from encoders.file_type import FileType
 from encoders.CreatePreviewImage import createPreviewImage
-from encoders.NewThumbnailEncoder import newThumbnailEncoder
+from encoders.ThumbnailEncoder import ThumbnailEncoder
+import logging
+
 
 # Flask 앱 정의
 app = Flask(__name__)
@@ -18,38 +19,26 @@ def health_check():
 def ready_check():
     return "ok"
 
+
 @app.route('/thumbnail', methods=['POST'])
-def create_thumbnail():
-    if 'file' not in request.files:
-        return 'no file part', 400
-    file = request.files['file']
-    type = request.form['fileType']
-    saveThumbnailName = request.form['saveThumbnailName']
-    outPutFilePath = request.form['outPutFilePath']
-
-    if type == FileType.IMAGE.name:
-        create_thumbnail = thumbnailEncoder(file, FileType.IMAGE, saveThumbnailName, outPutFilePath)
-        return create_thumbnail.createThumbnail()
-    elif type == FileType.VIDEO.name:
-        create_thumbnail = thumbnailEncoder(file, FileType.VIDEO, saveThumbnailName, outPutFilePath)
-        return create_thumbnail.createThumbnail()
-    else:
-        return "create_thumbnail is fail" , 500
-
-@app.route('/thumbnail_new', methods=['POST'])
 def new_create_thumbnail():
-    file_name = request.form['fileName']
-    file_path = request.form['filePath']
-    file_type = request.form['fileType']
+    
+    request_data = request.json
+    file_name = request_data['fileName']
+    file_path = request_data['filePath']
+    file_type = request_data['fileType']
 
     if file_type == FileType.IMAGE.name:
-        create_thumbnail = newThumbnailEncoder(file_name, file_path, FileType.IMAGE)
-        return create_thumbnail.createThumbnail()
+        create_thumbnail = ThumbnailEncoder(file_name, file_path, FileType.IMAGE)
+        return_value = create_thumbnail.createThumbnail();
+        return return_value
     elif file_type == FileType.VIDEO.name:
-        create_thumbnail = newThumbnailEncoder(file_name, file_path, FileType.VIDEO)
-        return create_thumbnail.createThumbnail()
+        create_thumbnail = ThumbnailEncoder(file_name, file_path, FileType.VIDEO)
+        return_value = create_thumbnail.createThumbnail()
+        return return_value
     else:
         return "create_thumbnail is fail" , 500
+
 
 @app.route('/metadata', methods=['POST'])
 def create_file_metadata():

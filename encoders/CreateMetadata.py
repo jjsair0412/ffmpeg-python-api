@@ -9,28 +9,15 @@ import json
 
 class metadata:
 
-    def __init__(self, file):
-        self.file = file
+    def __init__(self, tmp_path):
+        self.tmp_path = tmp_path
 
     def createMetadata(self) -> str:
-        if isinstance(self.file, FileStorage):
-            load_dotenv(dotenv_path='./config/.env')
-            targetFile = self.file
-            ffprobe_path = os.environ.get('ffprobe_path')
-
-            tmp_save_path = '/tmp/metadata'+datetime.today().strftime("/%Y/%m/%d/")+targetFile.filename
-
-            os.makedirs(tmp_save_path)
-
-            tmp_path = os.path.join(tmp_save_path, targetFile.filename)
-            targetFile.save(tmp_path) 
-
-            metaDto = self.getMetaData(ffprobe_path, tmp_path)
-            
-            shutil.rmtree(tmp_save_path)
-            return metaDto
-        else:
-            return 'createMetadata: Value not found or self.targetFile is not a dict', 500
+        load_dotenv(dotenv_path='./config/.env')
+        ffprobe_path = os.environ.get('ffprobe_path')
+        tmp_path = self.tmp_path
+        metaDto = self.getMetaData(ffprobe_path, tmp_path)
+        return metaDto
 
 
     @staticmethod
@@ -50,9 +37,6 @@ class metadata:
         format_info = metadata.get('format', {})
         video_stream = next((stream for stream in metadata.get('streams', []) if stream.get('codec_type') == 'video'), None)
         audio_stream = next((stream for stream in metadata.get('streams', []) if stream.get('codec_type') == 'audio'), None)
-
-        print("test width : " + str(video_stream.get('width')))
-        print("test height : " + str(video_stream.get('height')))
 
         data =  MetadataDto(
             format_long_name=format_info.get('format_long_name'),
