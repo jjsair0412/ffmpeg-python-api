@@ -2,6 +2,7 @@ import boto3
 import os
 import logging
 from dotenv import load_dotenv
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,12 @@ class Downloader:
     
     def multipartFileDownloader(self):
         try:
+
+            secret_client = boto3.client('secretsmanager')
+            # secret manager 파싱
+            get_secret_value_response = secret_client.get_secret_value(SecretId='sb_ffmpeg_api_key')
+            secret = get_secret_value_response['SecretString']
+            secret_dict=json.loads(secret)
 
             load_dotenv(dotenv_path='./config/.env')
 
@@ -31,8 +38,8 @@ class Downloader:
             # 사전인증 S3 POST URL 생성하기
             client = boto3.client(
                 's3',
-                aws_access_key_id=os.environ.get('access_key'),
-                aws_secret_access_key=os.environ.get('secret_key'),
+                aws_access_key_id=secret_dict["access_key"],
+                aws_secret_access_key=secret_dict["secret_key"],
                 region_name=os.environ.get('region_name')
             )
            
