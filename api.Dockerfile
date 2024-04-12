@@ -97,17 +97,17 @@ RUN apt install zlib1g-dev  -y
 RUN pip3 install -r requirements.txt
 
 # config.ini init
-ARG projectId
-ARG bucketName
-ARG regionName
-ARG chunkUploadTargetUrl
+ARG bucket_name
+ARG region_name
 ARG ffprobe_path
+ARG access_key
+ARG secret_key
 
-ENV projectId=$projectId
-ENV bucketName=$bucketName
-ENV regionName=$regionName
-ENV chunkUploadTargetUrl=$chunkUploadTargetUrl
+ENV bucket_name=$bucket_name
+ENV region_name=$region_name
 ENV ffprobe_path=$ffprobe_path
+ENV access_key=$access_key
+ENV secret_key=$secret_key
 
 RUN mkdir -p /app/tmp && \
   chmod -R 777 /app/tmp
