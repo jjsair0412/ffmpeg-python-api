@@ -45,10 +45,10 @@ class ThumbnailEncoder:
 
         thumbnailMetaDic = {}
 
-        match self.file_type :   
+        match self.file_type:   
             case FileType.IMAGE: # image
-                base_image_dic = self.imageThumbnailMaker(tmp_path, outPutFilePath, saveThumbnailName)
-                thumbnailMetaDic['thumbnail'] = base_image_dic
+                base_image_dict = self.imageThumbnailMaker(tmp_path, outPutFilePath, saveThumbnailName)
+                thumbnailMetaDic['thumbnail'] = base_image_dict
 
             
             case FileType.VIDEO: # video
@@ -120,6 +120,7 @@ class ThumbnailEncoder:
 
         # output_path = os.path.join('.' + outPutFilePath ,saveThumbnailName+".PNG")
         output_path = os.path.join(outPutFilePath ,saveThumbnailName+".jpeg")
+        thumbnail_paths=[]
 
         # ffmpeg.input(file_path)\
         #     .output(output_path, vframes=1, vf='scale=1280:720')\
@@ -135,7 +136,8 @@ class ThumbnailEncoder:
             file_bytes = file.read()
             base_images = bs.b64encode(file_bytes).decode('utf-8')
         
-        return base_images
+        thumbnail_paths.append(base_images)
+        return thumbnail_paths
 
 
     @staticmethod
