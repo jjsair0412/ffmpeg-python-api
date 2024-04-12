@@ -1,6 +1,8 @@
 import boto3
 import os
 import logging
+from dotenv import load_dotenv
+
 logger = logging.getLogger(__name__)
 
 class Downloader:
@@ -13,6 +15,9 @@ class Downloader:
     
     def multipartFileDownloader(self):
         try:
+
+            load_dotenv(dotenv_path='./config/.env')
+
             file_path = self.file_path
             file_name = self.file_name
             # 파일이 저장될 디렉토리 경로 추출
