@@ -100,14 +100,10 @@ RUN pip3 install -r requirements.txt
 ARG bucket_name
 ARG region_name
 ARG ffprobe_path
-# ARG access_key
-# ARG secret_key
 
 ENV bucket_name=$bucket_name
 ENV region_name=$region_name
 ENV ffprobe_path=$ffprobe_path
-# ENV access_key=$access_key
-# ENV secret_key=$secret_key
 
 RUN mkdir -p /app/tmp && \
   chmod -R 777 /app/tmp
