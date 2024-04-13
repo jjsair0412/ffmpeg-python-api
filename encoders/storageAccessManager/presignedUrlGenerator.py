@@ -28,7 +28,10 @@ class createUrl:
         :return : 오류시 None
         """
         
-        secret_client = boto3.client('secretsmanager')
+        secret_client = boto3.client(
+            service_name = 'secretsmanager',
+            region_name = os.environ.get('region_name')
+        )
         # secret manager 파싱
         get_secret_value_response = secret_client.get_secret_value(SecretId='sb_ffmpeg_api_key')
         secret = get_secret_value_response['SecretString']
