@@ -32,14 +32,14 @@ class newCreateStreaming:
         # ts 파일 이름 생성
         ts_segment_pattern = save_path + '_%03d_.ts'
         # 실제 임시저장된 파일의 경로와 이름이 저장된 변수
-        tmp_path = os.path.join('/tmp/'+uploadPath, origin_file_name)
+        tmp_path = os.path.join('/tmp/'+save_file_name, origin_file_name)
 
 
         # s3에서 파일 다운로드
         file_downloader = Downloader(
             file_path=save_file_name,
             file_name=origin_file_name,
-            sample_file_path=tmp_path
+            sample_file_path='/tmp/'+save_file_name
             )
         file_downloader.multipartFileDownloader()
 

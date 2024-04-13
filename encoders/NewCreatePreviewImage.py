@@ -7,15 +7,13 @@ from encoders.storageAccessManager.awsMultipartFileDownloader import Downloader
 
 
 class newCreatePreviewImage:
-    def __init__(self, previewPath, originName, origin_file_name, save_file_name):
+    def __init__(self, previewPath,  origin_file_name, save_file_name):
         self.previewPath = previewPath
-        self.originName = originName
         self.origin_file_name = origin_file_name
         self.save_file_name = save_file_name
 
     def createImageChunk(self) -> str:
         previewPath = self.previewPath
-        originName = self.originName
         origin_file_name = self.origin_file_name
         save_file_name = self.save_file_name
 
@@ -23,14 +21,14 @@ class newCreatePreviewImage:
             os.makedirs("/tmp/"+previewPath)
 
         # 미리보기 이미지 생성용 임시파일 저장 경로
-        tmp_path = os.path.join('/tmp/'+previewPath, originName)
+        tmp_path = os.path.join('/tmp/'+previewPath, origin_file_name)
         # 미리보기 이미지 파일 이름 생성
-        output_save_path = '/tmp/'+previewPath+'/' + originName+".png"
+        output_save_path = '/tmp/'+previewPath+'/' + origin_file_name+".png"
         # s3에서 파일 다운로드
         file_downloader = Downloader(
             file_path=save_file_name,
             file_name=origin_file_name,
-            sample_file_path=tmp_path
+            sample_file_path='/tmp/'+previewPath
             )
         file_downloader.multipartFileDownloader()
 

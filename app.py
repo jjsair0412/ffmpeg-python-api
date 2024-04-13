@@ -52,31 +52,31 @@ def new_create_thumbnail():
 #     return create_file_metadata.createMetadata()
 
 
-@app.route('/streaming_old', methods=['POST'])
-def create_streaming_chunk_old():
-    if 'file' not in request.files:
-        return 'no file part', 400
+# @app.route('/streaming_old', methods=['POST'])
+# def create_streaming_chunk_old():
+#     if 'file' not in request.files:
+#         return 'no file part', 400
     
-    file = request.files['file']
-    uploadPath = request.form['uploadPath']
-    contentName = request.form['contentName']
+#     file = request.files['file']
+#     uploadPath = request.form['uploadPath']
+#     contentName = request.form['contentName']
 
-    create_streaming = createStreaming(file, uploadPath, contentName)
+#     create_streaming = createStreaming(file, uploadPath, contentName)
 
-    return create_streaming.createVideoChunk()
+#     return create_streaming.createVideoChunk()
 
-@app.route('/previewImage_old', methods=['POST'])
-def create_preview_image_old():
-    if 'file' not in request.files:
-        return 'no file part', 400
+# @app.route('/previewImage_old', methods=['POST'])
+# def create_preview_image_old():
+#     if 'file' not in request.files:
+#         return 'no file part', 400
     
-    file = request.files['file']
-    previewPath = request.form['previewPath']
-    originName = request.form['originName']
+#     file = request.files['file']
+#     previewPath = request.form['previewPath']
+#     originName = request.form['originName']
 
-    create_preview_image = createPreviewImage(file, previewPath, originName)
+#     create_preview_image = createPreviewImage(file, previewPath, originName)
 
-    return create_preview_image.createImageChunk()
+#     return create_preview_image.createImageChunk()
 
 @app.route('/streaming', methods=['POST'])
 def create_streaming_chunk():
@@ -98,9 +98,8 @@ def create_preview_image():
     save_file_name = request.form['saveFileName']
     origin_file_name = request.form['originFileName']
     previewPath = request.form['previewPath']
-    originName = request.form['originName']
 
-    create_preview_image = newCreatePreviewImage(previewPath, originName, origin_file_name, save_file_name)
+    create_preview_image = newCreatePreviewImage(previewPath, origin_file_name, save_file_name)
 
     return create_preview_image.createImageChunk()
 

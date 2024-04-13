@@ -2,6 +2,7 @@ from werkzeug.datastructures import FileStorage
 from .file_type import FileType
 from encoders.storageAccessManager.awsMultipartFileDownloader import Downloader
 from encoders.CreateMetadata import metadata
+import json
 
 import shutil
 import os
@@ -116,11 +117,10 @@ class ThumbnailEncoder:
 
 
     @staticmethod
-    def imageThumbnailMaker(file_path, outPutFilePath, saveThumbnailName) -> dict:
+    def imageThumbnailMaker(file_path, outPutFilePath, saveThumbnailName) -> str:
 
         # output_path = os.path.join('.' + outPutFilePath ,saveThumbnailName+".PNG")
         output_path = os.path.join(outPutFilePath ,saveThumbnailName+".jpeg")
-        thumbnail_paths=[]
 
         # ffmpeg.input(file_path)\
         #     .output(output_path, vframes=1, vf='scale=1280:720')\
@@ -136,8 +136,7 @@ class ThumbnailEncoder:
             file_bytes = file.read()
             base_images = bs.b64encode(file_bytes).decode('utf-8')
         
-        thumbnail_paths.append(base_images)
-        return thumbnail_paths
+        return {'0':base_images}
 
 
     @staticmethod
