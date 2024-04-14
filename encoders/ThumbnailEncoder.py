@@ -92,8 +92,12 @@ class ThumbnailEncoder:
                 #     .run()
                 # OLD (해상도 고정)
                 
+                # ffmpeg.input(file_path, ss=midTime)\
+                #     .output(output_path, vframes=1, crf=51, **{'c:a': 'copy'})\
+                #     .run()
+
                 ffmpeg.input(file_path, ss=midTime)\
-                    .output(output_path, vframes=1,crf=63, **{'c:a': 'copy'})\
+                    .output(output_path, vframes=1, **{'qscale:v': 31})\
                     .run()
             
             else :
@@ -107,7 +111,7 @@ class ThumbnailEncoder:
                     # OLD (해상도 고정)
 
                     ffmpeg.input(file_path, ss=(start_offset / 1000))\
-                        .output(output_path, vframes=1 ,crf=63, **{'c:a': 'copy'})\
+                        .output(output_path, vframes=1, **{'qscale:v': 31})\
                         .run()
 
             
@@ -128,8 +132,12 @@ class ThumbnailEncoder:
         
 
 
+        # ffmpeg.input(file_path)\
+        #     .output(output_path, vframes=1, crf=51, c='copy', **{'c:a': 'copy'})\
+        #     .run()
+
         ffmpeg.input(file_path)\
-            .output(output_path, vframes=1, crf=51, c='copy', **{'c:a': 'copy'})\
+            .output(output_path, vframes=1, **{'qscale:v': 31})\
             .run()
 
         with open(output_path, 'rb') as file:

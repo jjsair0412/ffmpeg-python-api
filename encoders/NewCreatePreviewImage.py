@@ -40,13 +40,17 @@ class newCreatePreviewImage:
     @staticmethod
     def imageStreaming(tmp_path, output_save_path):
         
-        ffmpeg.input(tmp_path)\
-            .output(output_save_path, 
-                    vframes=1
-                    # vf='scale=1280:720'
-                    )\
-            .run()
+        # ffmpeg.input(tmp_path)\
+        #     .output(output_save_path, 
+        #             vframes=1
+        #             # vf='scale=1280:720'
+        #             )\
+        #     .run()
 
+        ffmpeg.input(tmp_path)\
+            .output(output_save_path, vframes=1, **{'qscale:v': 31})\
+            .run()
+        
         os.remove(tmp_path)
 
         print('output_save_path : ' + output_save_path)

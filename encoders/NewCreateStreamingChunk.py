@@ -59,6 +59,7 @@ class newCreateStreaming:
                 # vf='scale=1280:720',
                 format='hls', 
                 vcodec='libx264', 
+                crf=30,
                 hls_time=3, 
                 hls_list_size=0, 
                 hls_segment_filename=ts_segment_pattern, 
