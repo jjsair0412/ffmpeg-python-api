@@ -7,10 +7,11 @@ from encoders.storageAccessManager.awsMultipartFileDownloader import Downloader
 
 
 class newCreatePreviewImage:
-    def __init__(self, previewPath,  origin_file_name, save_file_name):
+    def __init__(self, previewPath,  origin_file_name, save_file_name, save_waterMark_path):
         self.previewPath = previewPath
         self.origin_file_name = origin_file_name
         self.save_file_name = save_file_name
+        self.save_waterMark_path = save_waterMark_path
 
     def createImageChunk(self) -> str:
         previewPath = self.previewPath
@@ -28,17 +29,19 @@ class newCreatePreviewImage:
         file_downloader = Downloader(
             file_path=save_file_name,
             file_name=origin_file_name,
-            sample_file_path='/tmp/'+previewPath
+            sample_file_path='/tmp/'+previewPath,
+            bucket_name=os.environ.get('contents_bucket_name')
             )
         file_downloader.multipartFileDownloader()
 
-        self.imageStreaming(tmp_path, output_save_path)
+        self.imageStreaming(tmp_path, output_save_path, self.save_waterMark_path)
 
+        os.remove(self.save_waterMark_path)
         shutil.rmtree('/tmp/'+previewPath)
         return 'ok'
             
     @staticmethod
-    def imageStreaming(tmp_path, output_save_path):
+    def imageStreaming(tmp_path, output_save_path, save_waterMark_path):
         
         # ffmpeg.input(tmp_path)\
         #     .output(output_save_path, 
@@ -49,6 +52,10 @@ class newCreatePreviewImage:
 
         ffmpeg.input(tmp_path)\
             .output(output_save_path, vframes=1, **{'qscale:v': 31})\
+            .global_args(
+                '-i',save_waterMark_path, 
+                '-filter_complex', '[1]format=rgba,colorchannelmixer=aa=0.5[logo];[0][logo]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p'
+                )\
             .run()
         
         os.remove(tmp_path)

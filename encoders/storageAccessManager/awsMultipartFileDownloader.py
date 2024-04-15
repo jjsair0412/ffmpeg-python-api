@@ -8,10 +8,11 @@ logger = logging.getLogger(__name__)
 
 class Downloader:
 
-    def __init__(self, file_path, file_name, sample_file_path) -> None:
+    def __init__(self, file_path, file_name, sample_file_path, bucket_name) -> None:
         self.file_path = file_path
         self.file_name = file_name
         self.sample_file_path = sample_file_path
+        self.bucket_name = bucket_name
 
     
     def multipartFileDownloader(self):
@@ -48,7 +49,7 @@ class Downloader:
            
 
             client.download_file(
-                os.environ.get('bucket_name'),
+                self.bucket_name,
                 file_path,  # 파일의 키를 지정합니다.
                 dir_path +'/'+ file_name  # 로컬에 저장될 파일 경로 및 이름을 지정합니다.
             )

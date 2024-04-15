@@ -8,11 +8,12 @@ from encoders.storageAccessManager.awsMultipartFileDownloader import Downloader
 
 
 class newCreateStreaming:
-    def __init__(self, uploadPath, contentName, origin_file_name, save_file_name):
+    def __init__(self, uploadPath, contentName, origin_file_name, save_file_name, save_waterMark_path):
         self.uploadPath = uploadPath
         self.contentName = contentName
         self.origin_file_name = origin_file_name
         self.save_file_name = save_file_name
+        self.save_waterMark_path = save_waterMark_path
 
     
     def createVideoChunk(self) -> str:
@@ -39,19 +40,21 @@ class newCreateStreaming:
         file_downloader = Downloader(
             file_path=save_file_name,
             file_name=origin_file_name,
-            sample_file_path='/tmp/'+save_file_name
+            sample_file_path='/tmp/'+save_file_name,
+            bucket_name=os.environ.get('contents_bucket_name')
             )
         file_downloader.multipartFileDownloader()
 
-        self.videoStreaming(tmp_path, m3u8FilePath, ts_segment_pattern, '/tmp/'+uploadPath, contentName)
+        self.videoStreaming(tmp_path, m3u8FilePath, ts_segment_pattern, '/tmp/'+uploadPath, contentName, self.save_waterMark_path)
 
         os.remove(tmp_path)
+        os.remove(self.save_waterMark_path)
         shutil.rmtree("/tmp/"+uploadPath)
         return 'ok'
             
 
     @staticmethod
-    def videoStreaming(tmp_path, m3u8FilePath, ts_segment_pattern, uploadPath, contentName):
+    def videoStreaming(tmp_path, m3u8FilePath, ts_segment_pattern, uploadPath, contentName, save_waterMark_path):
 
         ffmpeg.input(tmp_path)\
             .output(
@@ -64,6 +67,10 @@ class newCreateStreaming:
                 hls_list_size=0, 
                 hls_segment_filename=ts_segment_pattern, 
                 **{'profile:v': 'high444'})\
+            .global_args(
+                '-i',save_waterMark_path, 
+                '-filter_complex', '[1]format=rgba,colorchannelmixer=aa=0.5[logo];[0][logo]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p'
+                )\
             .run()
         
         ts_file_names = glob.glob(uploadPath + '/' + contentName + '*.ts')

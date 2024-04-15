@@ -1,21 +1,19 @@
-from werkzeug.datastructures import FileStorage
 from .file_type import FileType
 from encoders.storageAccessManager.awsMultipartFileDownloader import Downloader
 from encoders.CreateMetadata import metadata
-import json
 
 import shutil
 import os
 import ffmpeg
 import base64 as bs
-import logging
 
 class ThumbnailEncoder:
     
-    def __init__(self, file_name, file_path, file_type):
+    def __init__(self, file_name, file_path, file_type, save_waterMark_path):
         self.file_name = file_name
         self.file_path = file_path
         self.file_type = file_type
+        self.save_waterMark_path = save_waterMark_path
 
     def createThumbnail(self) -> dict:
 
@@ -31,7 +29,8 @@ class ThumbnailEncoder:
         file_downloader = Downloader(
             file_path=file_path,
             file_name=file_name,
-            sample_file_path=sample_file_path
+            sample_file_path=sample_file_path,
+            bucket_name=os.environ.get('contents_bucket_name')
             )
         
         file_downloader.multipartFileDownloader()
@@ -44,17 +43,19 @@ class ThumbnailEncoder:
         if not os.path.exists(outPutFilePath):
             os.makedirs(outPutFilePath)
 
+        save_waterMark_path = self.save_waterMark_path
+
         thumbnailMetaDic = {}
 
         match self.file_type:   
             case FileType.IMAGE: # image
-                base_image_dict = self.imageThumbnailMaker(tmp_path, outPutFilePath, saveThumbnailName)
+                base_image_dict = self.imageThumbnailMaker(tmp_path, save_waterMark_path, outPutFilePath, saveThumbnailName)
                 thumbnailMetaDic['thumbnail'] = base_image_dict
 
             
             case FileType.VIDEO: # video
                 video_duration = self.get_video_duration(tmp_path)
-                output_paths = self.videoThumbnailMaker(tmp_path, video_duration, outPutFilePath, saveThumbnailName)
+                output_paths = self.videoThumbnailMaker(tmp_path, save_waterMark_path, video_duration, outPutFilePath, saveThumbnailName)
                 video_thumbnail_dict = self.loadImages(output_paths)
                 thumbnailMetaDic['thumbnail'] = video_thumbnail_dict
             
@@ -67,6 +68,7 @@ class ThumbnailEncoder:
         get_meta_data = metadata(tmp_path=tmp_path)
         thumbnailMetaDic['metadata'] = get_meta_data.createMetadata()
         os.remove(tmp_path)
+        os.remove(save_waterMark_path)
         shutil.rmtree(outPutFilePath)
 
         return thumbnailMetaDic
@@ -75,7 +77,7 @@ class ThumbnailEncoder:
                 
     
     @staticmethod
-    def videoThumbnailMaker(file_path, videoDuration, outPutFilePath, saveThumbnailName) -> list:
+    def videoThumbnailMaker(file_path, waterMark_path, videoDuration, outPutFilePath, saveThumbnailName) -> list:
 
         fractions = {0.2, 0.4, 0.6, 0.8}
         thumbnail_paths=[]
@@ -98,6 +100,10 @@ class ThumbnailEncoder:
 
                 ffmpeg.input(file_path, ss=midTime)\
                     .output(output_path, vframes=1, **{'qscale:v': 31})\
+                    .global_args(
+                        '-i',waterMark_path, 
+                        '-filter_complex', '[1]format=rgba,colorchannelmixer=aa=0.5[logo];[0][logo]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p'
+                        )\
                     .run()
             
             else :
@@ -112,6 +118,10 @@ class ThumbnailEncoder:
 
                     ffmpeg.input(file_path, ss=(start_offset / 1000))\
                         .output(output_path, vframes=1, **{'qscale:v': 31})\
+                        .global_args(
+                            '-i',waterMark_path, 
+                            '-filter_complex', '[1]format=rgba,colorchannelmixer=aa=0.5[logo];[0][logo]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p'
+                            )\
                         .run()
 
             
@@ -121,7 +131,7 @@ class ThumbnailEncoder:
 
 
     @staticmethod
-    def imageThumbnailMaker(file_path, outPutFilePath, saveThumbnailName) -> str:
+    def imageThumbnailMaker(file_path, waterMark_path, outPutFilePath, saveThumbnailName) -> str:
 
         # output_path = os.path.join('.' + outPutFilePath ,saveThumbnailName+".PNG")
         output_path = os.path.join(outPutFilePath ,saveThumbnailName+".jpeg")
@@ -131,13 +141,16 @@ class ThumbnailEncoder:
         #     .run()
         
 
-
         # ffmpeg.input(file_path)\
         #     .output(output_path, vframes=1, crf=51, c='copy', **{'c:a': 'copy'})\
         #     .run()
 
         ffmpeg.input(file_path)\
             .output(output_path, vframes=1, **{'qscale:v': 31})\
+            .global_args(
+                '-i',waterMark_path, 
+                '-filter_complex', '[1]format=rgba,colorchannelmixer=aa=0.5[logo];[0][logo]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p'
+                )\
             .run()
 
         with open(output_path, 'rb') as file:
