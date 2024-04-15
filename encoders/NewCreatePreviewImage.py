@@ -24,12 +24,12 @@ class newCreatePreviewImage:
         # 미리보기 이미지 생성용 임시파일 저장 경로
         tmp_path = os.path.join('/tmp/'+previewPath, origin_file_name)
         # 미리보기 이미지 파일 이름 생성
-        output_save_path = '/tmp/'+previewPath+'/' + origin_file_name+".png"
+        output_save_path = '/tmp/'+previewPath+'/' + origin_file_name
         # s3에서 파일 다운로드
         file_downloader = Downloader(
             file_path=save_file_name,
-            file_name=origin_file_name,
             sample_file_path='/tmp/'+previewPath,
+            file_name=origin_file_name,
             bucket_name=os.environ.get('contents_bucket_name')
             )
         file_downloader.multipartFileDownloader()
