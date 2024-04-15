@@ -24,7 +24,7 @@ class newCreatePreviewImage:
         # 미리보기 이미지 생성용 임시파일 저장 경로
         tmp_path = os.path.join('/tmp/'+previewPath, origin_file_name)
         # 미리보기 이미지 파일 이름 생성
-        output_save_path = '/tmp/'+previewPath+'/' + origin_file_name
+        output_save_path = '/tmp/'+previewPath+'/' + origin_file_name+'.png'
         # s3에서 파일 다운로드
         file_downloader = Downloader(
             file_path=save_file_name,
@@ -37,7 +37,8 @@ class newCreatePreviewImage:
         self.imageStreaming(tmp_path, output_save_path, self.save_waterMark_path)
 
         os.remove(self.save_waterMark_path)
-        shutil.rmtree('/tmp/'+previewPath)
+        os.remove(output_save_path)
+        os.remove(tmp_path)
         return 'ok'
             
     @staticmethod
@@ -60,9 +61,7 @@ class newCreatePreviewImage:
                 )\
             .run()
         
-        os.remove(tmp_path)
 
-        print('output_save_path : ' + output_save_path)
         with open(output_save_path, 'rb') as image:
             target_image = {'file': (output_save_path[5:],image)}
             storageManager = awsStorageAccess(target_image, output_save_path[5:])
