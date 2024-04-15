@@ -148,9 +148,12 @@ ok
 ### Docker build command
 ```bash
 docker build -t ffmpeg-api:{tag} . \
-  --build-arg "projectId={projectId}" \
-  --build-arg "bucketName={bucketName}" \
-  --build-arg "regionName={regionName}" \
-  --build-arg "chunkUploadTargetUrl={chunkUploadTargetUrl}" \
-  --build-arg "ffprobe_path=/usr/local/bin/ffprobe"
+  --build-arg "region_name=$region_name" \
+  --build-arg "bucket_name=$bucket_name" \
+  --build-arg "ffprobe_path=$ffprobe_save_path" \
+  --build-arg "contents_bucket_name=$content_save_path" \
+  --build-arg "etc_bucket_name=$etc_bucket_name" \
+  --build-arg "waterMark_path=be-$waterMark_key" \
+  --build-arg "waterMark_name=$waterMark_name" \
+  --build-arg "waterMark_save_path=$waterMark_save_path" \
 ```

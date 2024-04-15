@@ -101,9 +101,21 @@ ARG bucket_name
 ARG region_name
 ARG ffprobe_path
 
+ARG contents_bucket_name
+ARG etc_bucket_name
+ARG waterMark_path
+ARG waterMark_name
+ARG waterMark_save_path
+
 ENV bucket_name=$bucket_name
 ENV region_name=$region_name
 ENV ffprobe_path=$ffprobe_path
+
+ENV contents_bucket_name=$contents_bucket_name
+ENV etc_bucket_name=$etc_bucket_name
+ENV waterMark_path=$waterMark_path
+ENV waterMark_name=$waterMark_name
+ENV waterMark_save_path=$waterMark_save_path
 
 RUN mkdir -p /app/tmp && \
   chmod -R 777 /app/tmp
