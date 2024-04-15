@@ -43,18 +43,20 @@ class newCreatePreviewImage:
     @staticmethod
     def imageStreaming(tmp_path, output_save_path, save_waterMark_path):
         
+
         # ffmpeg.input(tmp_path)\
-        #     .output(output_save_path, 
-        #             vframes=1
-        #             # vf='scale=1280:720'
-        #             )\
+        #     .output(output_save_path, vframes=1, **{'qscale:v': 31})\
+        #     .global_args(
+        #         '-i',save_waterMark_path, 
+        #         '-filter_complex', '[1]format=rgba,colorchannelmixer=aa=0.5[logo];[0][logo]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p'
+        #         )\
         #     .run()
 
         ffmpeg.input(tmp_path)\
-            .output(output_save_path, vframes=1, **{'qscale:v': 31})\
+            .output(output_save_path, vframes=1, **{'qscale:v': 15})\
             .global_args(
                 '-i',save_waterMark_path, 
-                '-filter_complex', '[1]format=rgba,colorchannelmixer=aa=0.5[logo];[0][logo]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p'
+                '-filter_complex', '[0:v][1:v]scale2ref=w=iw:h=ow/mdar[base][wm];[base][wm]overlay=(W-w)/2:(H-h)-10'
                 )\
             .run()
         

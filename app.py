@@ -28,14 +28,13 @@ def new_create_thumbnail():
     file_path = request_data['filePath']
     file_type = request_data['fileType']
 
-    save_waterMark_path = downloadWaterMark()
 
     if file_type == FileType.IMAGE.name:
-        create_thumbnail = ThumbnailEncoder(file_name, file_path, FileType.IMAGE, save_waterMark_path)
+        create_thumbnail = ThumbnailEncoder(file_name, file_path, FileType.IMAGE)
         return_value = create_thumbnail.createThumbnail();
         return return_value
     elif file_type == FileType.VIDEO.name:
-        create_thumbnail = ThumbnailEncoder(file_name, file_path, FileType.VIDEO, save_waterMark_path)
+        create_thumbnail = ThumbnailEncoder(file_name, file_path, FileType.VIDEO)
         return_value = create_thumbnail.createThumbnail()
         return return_value
     else:
