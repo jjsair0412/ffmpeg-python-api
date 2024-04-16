@@ -71,7 +71,8 @@ class newCreateStreaming:
         #         '-i',save_waterMark_path, 
         #         '-filter_complex', '[1]format=rgba,colorchannelmixer=aa=0.5[logo];[0][logo]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p'
         #         )\[1]format=rgba,colorchannelmixer=aa=0.5[logo];[0][logo]overlay=(W-w)/2:H-h:format=auto,format=yuv420p
-        #     .run()[1][0]scale2ref=iw:ih[wm][video];[video][wm]overlay=x=(W-w)/2:y=H-h
+        #     .run()
+        # [0:v][1:v]scale2ref=w=iw:h=ow/mdar[base][wm];[base][wm]overlay=(W-w)/2:(H-h)-10,pad=width=ceil(iw/2)*2:height=ceil(ih/2)*2
 
         ffmpeg.input(tmp_path)\
             .output(
@@ -85,7 +86,7 @@ class newCreateStreaming:
                 **{'profile:v': 'high444'})\
             .global_args(
                 '-i',save_waterMark_path, 
-                '-filter_complex','[0:v][1:v]scale2ref=w=iw:h=ow/mdar[base][wm];[base][wm]overlay=(W-w)/2:(H-h)-10,pad=width=ceil(iw/2)*2:height=ceil(ih/2)*2'
+                '-filter_complex','overlay=W-w-5:H-h-5'
                 )\
             .run()
 
