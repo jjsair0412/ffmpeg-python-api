@@ -3,7 +3,8 @@ import os
 import shutil
 from encoders.storageAccessManager.awsStorageAccess import awsStorageAccess
 from encoders.storageAccessManager.awsMultipartFileDownloader import Downloader
-
+import subprocess
+from dotenv import load_dotenv
 
 
 class newCreatePreviewImage:
@@ -45,23 +46,29 @@ class newCreatePreviewImage:
     def imageStreaming(tmp_path, output_save_path, save_waterMark_path):
         
 
-        # ffmpeg.input(tmp_path)\
-        #     .output(output_save_path, vframes=1, **{'qscale:v': 31})\
-        #     .global_args(
-        #         '-i',save_waterMark_path, 
-        #         '-filter_complex', '[1]format=rgba,colorchannelmixer=aa=0.5[logo];[0][logo]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p'
-        #         )\
-        #     .run()[0:v][1:v]scale2ref=w=iw:h=ow/mdar[base][wm];[base][wm]overlay=(W-w)/2:(H-h)-10
+        load_dotenv(dotenv_path='./config/.env')
+        ffprobe_path = os.environ.get('ffprobe_path')
+        
+        cmd = [
+            ffprobe_path,
+            '-v', 'error',
+            '-show_entries','stream=width,height',
+            '-of', 'default=noprint_wrappers=1:nokey=1',
+            tmp_path
+        ] 
+
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output = result.stdout.decode()  # 바이트 객체를 문자열로 변환
+        width, height = output.strip().split('\n')
 
         ffmpeg.input(tmp_path)\
             .output(output_save_path, vframes=1, **{'qscale:v': 15})\
             .global_args(
                 '-i',save_waterMark_path, 
-                '-filter_complex', 'overlay=W-w-5:H-h-5'
+                '-filter_complex', f'[1:v]scale=w=trunc({width}/2):h=-1 [wm]; [0:v][wm]overlay=W-w-50:H-h-50'
                 )\
             .run()
         
-
         with open(output_save_path, 'rb') as image:
             target_image = {'file': (output_save_path[5:],image)}
             storageManager = awsStorageAccess(target_image, output_save_path[5:])

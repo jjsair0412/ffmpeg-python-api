@@ -2,10 +2,12 @@ import shutil
 import glob
 import ffmpeg
 import os
-from werkzeug.datastructures import FileStorage
+import subprocess
+from dotenv import load_dotenv
 from encoders.storageAccessManager.awsStorageAccess import awsStorageAccess
 from encoders.storageAccessManager.awsMultipartFileDownloader import Downloader
-
+import json
+import logging
 
 class newCreateStreaming:
     def __init__(self, uploadPath, contentName, origin_file_name, save_file_name, save_waterMark_path):
@@ -56,23 +58,20 @@ class newCreateStreaming:
     @staticmethod
     def videoStreaming(tmp_path, m3u8FilePath, ts_segment_pattern, uploadPath, contentName, save_waterMark_path):
 
-        # ffmpeg.input(tmp_path)\
-        #     .output(
-        #         m3u8FilePath,
-        #         # vf='scale=1280:720',
-        #         format='hls', 
-        #         vcodec='libx264', 
-        #         crf=40,
-        #         hls_time=3, 
-        #         hls_list_size=0, 
-        #         hls_segment_filename=ts_segment_pattern, 
-        #         **{'profile:v': 'high444'})\
-        #     .global_args(
-        #         '-i',save_waterMark_path, 
-        #         '-filter_complex', '[1]format=rgba,colorchannelmixer=aa=0.5[logo];[0][logo]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p'
-        #         )\[1]format=rgba,colorchannelmixer=aa=0.5[logo];[0][logo]overlay=(W-w)/2:H-h:format=auto,format=yuv420p
-        #     .run()
-        # [0:v][1:v]scale2ref=w=iw:h=ow/mdar[base][wm];[base][wm]overlay=(W-w)/2:(H-h)-10,pad=width=ceil(iw/2)*2:height=ceil(ih/2)*2
+        load_dotenv(dotenv_path='./config/.env')
+        ffprobe_path = os.environ.get('ffprobe_path')
+        
+        cmd = [
+            ffprobe_path,
+            '-v', 'error',
+            '-show_entries','stream=width,height',
+            '-of', 'default=noprint_wrappers=1:nokey=1',
+            tmp_path
+        ] 
+
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output = result.stdout.decode()  # 바이트 객체를 문자열로 변환
+        width, height = output.strip().split('\n')
 
         ffmpeg.input(tmp_path)\
             .output(
@@ -86,7 +85,7 @@ class newCreateStreaming:
                 **{'profile:v': 'high444'})\
             .global_args(
                 '-i',save_waterMark_path, 
-                '-filter_complex','overlay=W-w-5:H-h-5'
+                '-filter_complex',f'[1:v]scale=w=trunc({width}/2):h=-1 [wm]; [0:v][wm]overlay=W-w-50:H-h-50'
                 )\
             .run()
 
