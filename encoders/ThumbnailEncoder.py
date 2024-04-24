@@ -85,19 +85,15 @@ class ThumbnailEncoder:
             output_path = os.path.join(outPutFilePath, thumbnail_name)
 
             if videoDuration < 3:
-                midTime = videoDuration * 1000 / 2
-                
+                # midTime = videoDuration * 1000 / 2
                 # ffmpeg.input(file_path, ss=midTime)\
-                #     .output(output_path, vframes=1, **{'qscale:v': 31})\
-                #     .global_args(
-                #         '-i',waterMark_path, 
-                #         '-filter_complex', 'overlay=main_w-overlay_w:main_h-overlay_h'
-                #         )\
+                #     .output(output_path, vframes=1, **{'qscale:v': 15})\
                 #     .run()
-
+                
+                midTime = max(0.5, videoDuration / 2)
                 ffmpeg.input(file_path, ss=midTime)\
-                    .output(output_path, vframes=1, **{'qscale:v': 15})\
-                    .run()
+                      .output(output_path, vframes=1, **{'qscale:v': 15})\
+                      .run()
             
             else :
                     # start_offsets = []
