@@ -48,7 +48,7 @@ RUN apt-get install libmp3lame-dev -y
 
 RUN apt-get install libopus-dev -y
 
-RUN mv /app/ffmpeg-snapshot.tar.bz2 ~/ffmpeg_sources/
+RUN mv /app/bin/ffmpeg-snapshot.tar.bz2 ~/ffmpeg_sources/
 RUN cd ~/ffmpeg_sources && \
 #    curl -o ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2 && \
    tar xjvf ffmpeg-snapshot.tar.bz2 && \
@@ -97,17 +97,25 @@ RUN apt install zlib1g-dev  -y
 RUN pip3 install -r requirements.txt
 
 # config.ini init
-ARG projectId
-ARG bucketName
-ARG regionName
-ARG chunkUploadTargetUrl
+ARG bucket_name
+ARG region_name
 ARG ffprobe_path
 
-ENV projectId=$projectId
-ENV bucketName=$bucketName
-ENV regionName=$regionName
-ENV chunkUploadTargetUrl=$chunkUploadTargetUrl
+ARG contents_bucket_name
+ARG etc_bucket_name
+ARG waterMark_path
+ARG waterMark_name
+ARG waterMark_save_path
+
+ENV bucket_name=$bucket_name
+ENV region_name=$region_name
 ENV ffprobe_path=$ffprobe_path
+
+ENV contents_bucket_name=$contents_bucket_name
+ENV etc_bucket_name=$etc_bucket_name
+ENV waterMark_path=$waterMark_path
+ENV waterMark_name=$waterMark_name
+ENV waterMark_save_path=$waterMark_save_path
 
 RUN mkdir -p /app/tmp && \
   chmod -R 777 /app/tmp
